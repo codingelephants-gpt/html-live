@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spinning Donut</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: monospace;
+      white-space: pre;
+      font-size: 10px;
+    }
+    pre {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <pre id="donut"></pre>
+
+  <script>
+    const preTag = document.getElementById('donut');
+
+    let A = 0, B = 0;
+
+    function renderFrame() {
+      const b = [];
+      const z = [];
+      const width = 40, height = 22;
+      const background = ' ';
+      
+      for (let i = 0; i < width * height; i++) {
+        b[i] = background;
+        z[i] = 0;
+      }
+      
+      const cosA = Math.cos(A), sinA = Math.sin(A);
+      const cosB = Math.cos(B), sinB = Math.sin(B);
+
+      for (let j = 0; j < 6.28; j += 0.07) {
+        const ct = Math.cos(j), st = Math.sin(j);
+        for (let i = 0; i < 6.28; i += 0.02) {
+          const sp = Math.sin(i), cp = Math.cos(i);
+          const h = ct + 2;
+          const D = 1 / (sp * h * sinA + st * cosA + 5);
+          const t = sp * h * cosA - st * sinA;
+          const x = Math.floor(width / 2 + (width * 2 / 5) * D * (cp * h * cosB - t * sinB));
+          const y = Math.floor(height / 2 + (height) * D * (cp * h * sinB + t * cosB) / 2);
+          const o = Math.floor(x + width * y);
+          const N = Math.floor(8 * ((st * sinA - sp * ct * cosA) * cosB - sp * ct * sinA - st * cosA - cp * ct * sinB));
+          
+          if (height > y && y > 0 && x > 0 && width > x && D > z[o]) {
+            z[o] = D;
+            b[o] = ".,-~:;=!*#$@"[Math.max(N, 0)];
+          }
+        }
+      }
+      
+      let output = '';
+      for (let k = 0; k < b.length + 1; k++) {
+        output += k % width ? b[k] : "\n";
+      }
+      preTag.textContent = output;
+    }
+
+    function animate() {
+      renderFrame();
+      A += 0.04;
+      B += 0.02;
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
